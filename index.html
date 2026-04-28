@@ -1446,12 +1446,20 @@
       function teleport() {
         const x = rand(-80, 80);
         const z = rand(-80, 80);
-        const y = rand(5, 50);
+        
+        let y;
+        const toGround = Math.random() < 0.5;
+        if (toGround) {
+          y = getGroundHeight(x, z, 60);
+          player.flying = false;
+        } else {
+          y = rand(15, 50);
+          player.flying = true;
+        }
         
         createDebrisBurst(player.pos.clone().add(new THREE.Vector3(0, 2, 0)), [shared.mats.playerCloth, shared.mats.playerSkin], 15, 4);
         player.pos.set(x, y, z);
         player.vel.set(0, 0, 0);
-        player.flying = true;
         
         // 让角色面向中心宝塔方向 (0, 0, 0)
         player.facing = Math.atan2(-x, -z);
