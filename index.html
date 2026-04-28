@@ -321,6 +321,8 @@
         <div>Shift：疾跑</div>
         <div>Space：跳跃</div>
         <div>R：起飞 / Q：下降</div>
+        <div>T：全图随机闪现</div>
+        <div>G：大铁锤巨人模式 (攻击范围极大)</div>
         <div>E / 右键：闪避翻滚 / 蓄力旋斩</div>
         <div>F：释放终极剑气 (满能量)</div>
         <div>左键：普通攻击</div>
@@ -1279,7 +1281,9 @@
         hp: 100,
         maxHp: 100,
         energy: 0,
-        maxEnergy: 100
+        maxEnergy: 100,
+        isGiant: false,
+        giantTimer: 0
       };
 
       const playerParts = {};
@@ -1333,6 +1337,19 @@
         addVoxel(sword, 0, -0.1, 0, 0.36, 0.12, 0.36, shared.mats.black);
         sword.position.set(0, -0.42, 0);
         playerParts.rightArm.add(sword);
+
+        // Hammer mesh (hidden by default)
+        const hammerHandle = makeBox(0.2, 3.5, 0.2, shared.mats.roof);
+        const hammerHead = makeBox(1.5, 1.0, 1.0, shared.mats.trim);
+        hammerHead.position.y = 1.8;
+        const hammer = new THREE.Group();
+        hammer.add(hammerHandle);
+        hammer.add(hammerHead);
+        hammer.position.set(1.4, 1.8, 0.4);
+        hammer.rotation.x = Math.PI / 2;
+        hammer.visible = false;
+        g.add(hammer);
+        playerParts.hammer = hammer;
 
         player.root.add(g);
         player.root.position.copy(player.pos);
@@ -1424,6 +1441,43 @@
         }
       }
 
+      function teleport() {
+        const x = rand(-80, 80);
+        const z = rand(-80, 80);
+        const y = rand(5, 50);
+        
+        createDebrisBurst(player.pos.clone().add(new THREE.Vector3(0, 2, 0)), [shared.mats.playerCloth, shared.mats.playerSkin], 15, 4);
+        player.pos.set(x, y, z);
+        player.vel.set(0, 0, 0);
+        player.flying = true;
+        
+        // 让视角盯向中心宝塔方向 (0, 0, 0)
+        cameraRig.yaw = Math.atan2(-x, -z);
+        player.facing = cameraRig.yaw; // 同时让角色也面向中心
+        
+        createDustBurst(player.pos.clone().add(new THREE.Vector3(0, 0.5, 0)), 20, 3);
+        
+        const tip = document.getElementById('tip');
+        tip.textContent = "已闪现！视角已锁定中心宝塔方向。";
+        tip.style.opacity = "1";
+        setTimeout(() => tip.style.opacity = "0.7", 1000);
+      }
+
+      function toggleGiant() {
+        player.isGiant = !player.isGiant;
+        const s = player.isGiant ? 2 : 1;
+        player.visual.scale.set(s, s, s);
+        playerParts.hammer.visible = player.isGiant;
+        
+        createDustBurst(player.pos.clone(), player.isGiant ? 30 : 15, player.isGiant ? 4 : 2);
+        shakeTimer = 0.3;
+        
+        const tip = document.getElementById('tip');
+        tip.textContent = player.isGiant ? "变身巨人！大铁锤蓄势待发！" : "恢复常态。";
+        tip.style.opacity = "1";
+        setTimeout(() => tip.style.opacity = "0.7", 1500);
+      }
+
       function setInstancedAt(mesh, index, pos, rotY, sx, sy, sz) {
         dummy.position.copy(pos);
         dummy.rotation.set(0, rotY, 0);
@@ -1513,6 +1567,8 @@
           const uiElements = document.querySelectorAll('.panel, .tip');
           uiElements.forEach(el => el.style.display = el.style.display === 'none' ? '' : 'none');
         }
+        if (e.code === "KeyT") teleport();
+        if (e.code === "KeyG") toggleGiant();
       }, { passive: false });
 
       window.addEventListener("keyup", (e) => keys.delete(e.code));
@@ -1706,18 +1762,24 @@
         const isSpin = player.attackType === "spin";
         const isUlt = player.attackType === "ultimate";
         const isHeavy = player.attackType === "slash2";
+        const isHammer = player.isGiant;
         
-        const range = isUlt ? 12 : (isSpin ? 4.25 : (isHeavy ? 3.8 : 3.2));
-        const radius = isUlt ? 10 : (isSpin ? 3.2 : (isHeavy ? 2.5 : 1.9));
+        const range = isHammer ? 18 : (isUlt ? 12 : (isSpin ? 4.25 : (isHeavy ? 3.8 : 3.2)));
+        const radius = isHammer ? 15 : (isUlt ? 10 : (isSpin ? 3.2 : (isHeavy ? 2.5 : 1.9)));
         
-        const hitCenter = player.pos.clone().add(new THREE.Vector3(Math.sin(player.facing) * (isSpin||isUlt ? 0.8 : 1.8), 0, Math.cos(player.facing) * (isSpin||isUlt ? 0.8 : 1.8)));
+        const hitCenter = player.pos.clone().add(new THREE.Vector3(Math.sin(player.facing) * (isSpin||isUlt||isHammer ? 0.8 : 1.8), 0, Math.cos(player.facing) * (isSpin||isUlt||isHammer ? 0.8 : 1.8)));
+
+        if (isHammer) {
+          createDustBurst(hitCenter.clone(), 40, 6);
+          shakeTimer = 0.5;
+        }
 
         destructibles.forEach(obj => {
           if (!obj.alive) return;
           const dist = obj.group.position.distanceTo(hitCenter);
           if (dist < radius + obj.radius) {
             const dir = obj.group.position.clone().sub(player.pos).setY(0).normalize();
-            damageDestructible(obj, isUlt ? 5 : (isSpin||isHeavy ? 2 : 1), dir);
+            damageDestructible(obj, isHammer ? 10 : (isUlt ? 5 : (isSpin||isHeavy ? 2 : 1)), dir);
           }
         });
 
@@ -1726,12 +1788,12 @@
           const d = enemy.pos.distanceTo(hitCenter);
           if (d < range) {
             const dir = enemy.pos.clone().sub(player.pos).setY(0).normalize();
-            enemy.hp -= isUlt ? 10 : (isSpin||isHeavy ? 3 : 1);
-            enemy.hitTimer = isUlt ? 0.8 : 0.25;
-            enemy.vel.addScaledVector(dir, isUlt ? 22 : (isSpin ? 13 : 7));
-            enemy.launchedY = isUlt ? rand(8, 12) : (isSpin ? rand(4, 7) : rand(1.4, 3.2));
-            enemy.spin += isUlt ? rand(-4, 4) : (isSpin ? rand(-2.4, 2.4) : rand(-0.9, 0.9));
-            createDebrisBurst(enemy.pos.clone().add(new THREE.Vector3(0, 1.9, 0)), [shared.mats.enemyCloth, shared.mats.enemyHead], isUlt ? 20 : (isSpin ? 12 : 5), isUlt ? 8 : (isSpin ? 5 : 3));
+            enemy.hp -= isHammer ? 20 : (isUlt ? 10 : (isSpin||isHeavy ? 3 : 1));
+            enemy.hitTimer = isHammer ? 1.2 : (isUlt ? 0.8 : 0.25);
+            enemy.vel.addScaledVector(dir, isHammer ? 35 : (isUlt ? 22 : (isSpin ? 13 : 7)));
+            enemy.launchedY = isHammer ? rand(15, 25) : (isUlt ? rand(8, 12) : (isSpin ? rand(4, 7) : rand(1.4, 3.2)));
+            enemy.spin += isHammer ? rand(-8, 8) : (isUlt ? rand(-4, 4) : (isSpin ? rand(-2.4, 2.4) : rand(-0.9, 0.9)));
+            createDebrisBurst(enemy.pos.clone().add(new THREE.Vector3(0, 1.9, 0)), [shared.mats.enemyCloth, shared.mats.enemyHead], isHammer ? 30 : (isUlt ? 20 : (isSpin ? 12 : 5)), isHammer ? 12 : (isUlt ? 8 : (isSpin ? 5 : 3)));
             if (enemy.hp <= 0) {
               enemy.active = false;
               totalKOs += 1;
