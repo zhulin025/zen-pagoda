@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Zen Pagoda</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <style>
@@ -261,9 +261,9 @@
   </div>
   
   <div id="touchUI">
-    <div style="position:absolute; top:80px; right:12px; pointer-events:auto; display:flex; flex-direction:column; gap:8px;">
-      <button id="tBtnHide" class="touchBtn" style="width:40px; height:40px; font-size:11px;">隐藏</button>
-      <button id="tBtnHelp" class="touchBtn" style="width:40px; height:40px; font-size:11px;">帮助</button>
+    <div style="position:absolute; top:160px; right:12px; pointer-events:auto; display:flex; flex-direction:column; gap:8px;">
+      <button id="tBtnHide" class="touchBtn" style="width:44px; height:44px; font-size:11px;">隐藏</button>
+      <button id="tBtnHelp" class="touchBtn" style="width:44px; height:44px; font-size:11px;">帮助</button>
     </div>
     <div style="position:absolute; bottom:120px; right:30px; display:flex; align-items:flex-end; gap:10px;">
       <button id="tBtnUlt" class="touchBtn" style="width:50px; height:50px; font-size:12px; background:rgba(214,81,79,0.3); border-color:var(--accent); color:white;">大招</button>
@@ -1548,15 +1548,26 @@
         if (e.button === 2) mouse.right = false;
       });
 
+      // Mobile Touch Events
+      let touchDist = 0;
       window.addEventListener("touchstart", (e) => {
-        if (e.target.tagName !== "BUTTON" && e.target.tagName !== "INPUT") {
+        if (e.touches.length === 2) {
+          touchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        } else if (e.target.tagName !== "BUTTON" && e.target.tagName !== "INPUT") {
           mouse.isDragging = true;
           mouse.lastX = e.touches[0].clientX;
           mouse.lastY = e.touches[0].clientY;
         }
       }, { passive: false });
+      
       window.addEventListener("touchmove", (e) => {
-        if (mouse.isDragging && e.target.tagName !== "BUTTON") {
+        if (e.touches.length === 2) {
+          const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          const delta = (d - touchDist) * 0.05;
+          cameraRig.distance = clamp(cameraRig.distance - delta, 5, 25);
+          touchDist = d;
+          e.preventDefault();
+        } else if (mouse.isDragging && e.target.tagName !== "BUTTON") {
           const dx = e.touches[0].clientX - mouse.lastX;
           const dy = e.touches[0].clientY - mouse.lastY;
           cameraRig.yaw -= dx * 0.007;
@@ -1616,7 +1627,10 @@
       bindTouch('tBtnRoll', () => rollRequest(), () => {});
       bindTouch('tBtnFly', () => keys.add("KeyR"), () => keys.delete("KeyR"));
       bindTouch('tBtnDescend', () => keys.add("KeyQ"), () => keys.delete("KeyQ"));
-      bindTouch('tBtnUlt', () => attackRequest("ultimate"), () => {});
+      bindTouch('tBtnUlt', () => {
+        // 移动端特别优化：如果能量不够，给一点视觉反馈提示（可选）
+        attackRequest("ultimate");
+      }, () => {});
       
       const tBtnHide = document.getElementById('tBtnHide');
       const tBtnHelp = document.getElementById('tBtnHelp');
