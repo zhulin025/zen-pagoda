@@ -151,14 +151,54 @@
     .hitFlash {
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at center, rgba(255, 255, 255, 0.03), rgba(255, 120, 120, 0.16));
+      background: rgba(214, 81, 79, 0.15);
       opacity: 0;
-      mix-blend-mode: screen;
-      transition: opacity 90ms ease;
+      transition: opacity 0.1s;
+      pointer-events: none;
     }
-
     .hitFlash.show { opacity: 1; }
+
+    #startOverlay {
+      position: fixed;
+      inset: 0;
+      background: var(--paper);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #startOverlay h2 { font-size: 32px; margin-bottom: 10px; }
+    #startBtn {
+      padding: 16px 36px;
+      font-size: 18px;
+      border-radius: 30px;
+      background: var(--accent-2);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(109,180,166,0.4);
+      font-weight: bold;
+    }
+    #touchUI {
+      display: none;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 900;
+    }
+    .touchBtn {
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.6);
+      color: var(--ink);
+      font-weight: 800;
+      pointer-events: auto;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    .touchBtn:active { background: rgba(255,255,255,0.6); }
 
     @media (max-width: 720px) {
       .title h1 { font-size: 22px; }
@@ -168,6 +208,21 @@
   </style>
 </head>
 <body>
+  <div id="startOverlay">
+    <h2>禅塔 (Zen Pagoda)</h2>
+    <p style="margin-bottom:30px; opacity:0.8;">使用键盘鼠标，或在手机上通过陀螺仪移动</p>
+    <button id="startBtn">进入游戏</button>
+  </div>
+  
+  <div id="touchUI">
+    <div style="position:absolute; bottom:40px; right:30px; display:flex; align-items:flex-end; gap:15px;">
+      <button id="tBtnFly" class="touchBtn" style="width:50px; height:50px; font-size:12px;">上升</button>
+      <button id="tBtnJump" class="touchBtn" style="width:60px; height:60px; font-size:14px;">跳跃</button>
+      <button id="tBtnAtk" class="touchBtn" style="width:75px; height:75px; font-size:16px; border-color:var(--accent); color:var(--accent);">攻击</button>
+      <button id="tBtnRoll" class="touchBtn" style="width:50px; height:50px; font-size:12px;">闪避</button>
+    </div>
+  </div>
+
   <div class="hud">
     <section class="panel title">
       <h1>禅塔 (Zen Pagoda)</h1>
@@ -191,8 +246,8 @@
       <div class="controlsGrid">
         <div>WASD / 方向键：移动</div>
         <div>Shift：疾跑</div>
-        <div>Space：跳跃 (长按飞行)</div>
-        <div>Q：飞行下降</div>
+        <div>Space：跳跃</div>
+        <div>R：起飞 / Q：下降</div>
         <div>E / 右键：闪避翻滚 / 蓄力旋斩</div>
         <div>F：释放终极剑气 (满能量)</div>
         <div>左键：普通攻击</div>
@@ -1420,6 +1475,78 @@
         if (e.button === 2) mouse.right = false;
       });
 
+      // Mobile Touch Events
+      window.addEventListener("touchstart", (e) => {
+        if (e.target.tagName !== "BUTTON" && e.target.tagName !== "INPUT") {
+          mouse.isDragging = true;
+          mouse.lastX = e.touches[0].clientX;
+          mouse.lastY = e.touches[0].clientY;
+        }
+      }, { passive: false });
+      window.addEventListener("touchmove", (e) => {
+        if (mouse.isDragging && e.target.tagName !== "BUTTON") {
+          const dx = e.touches[0].clientX - mouse.lastX;
+          const dy = e.touches[0].clientY - mouse.lastY;
+          cameraRig.yaw -= dx * 0.007;
+          cameraRig.pitch = clamp(cameraRig.pitch + dy * 0.007, 0.1, 1.4);
+          mouse.lastX = e.touches[0].clientX;
+          mouse.lastY = e.touches[0].clientY;
+        }
+      }, { passive: false });
+      window.addEventListener("touchend", () => { mouse.isDragging = false; });
+
+      // Gyroscope Mobile Control
+      let useGyro = false;
+      let gyroInput = { x: 0, z: 0 };
+      
+      document.getElementById('startBtn').addEventListener('click', async () => {
+        document.getElementById('startOverlay').style.display = 'none';
+        
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          try {
+            const permission = await DeviceOrientationEvent.requestPermission();
+            if (permission === 'granted') {
+              useGyro = true;
+              document.getElementById('touchUI').style.display = 'block';
+            }
+          } catch (e) { console.error(e); }
+        } else if (/Mobi|Android/i.test(navigator.userAgent)) {
+          useGyro = true;
+          document.getElementById('touchUI').style.display = 'block';
+        }
+      });
+
+      window.addEventListener('deviceorientation', (e) => {
+        if (!useGyro) return;
+        const beta = e.beta || 0;
+        const gamma = e.gamma || 0;
+        
+        let x = 0;
+        let z = 0;
+        // Assume holding phone at 40 degrees is neutral
+        const neutralBeta = 40;
+        const diffBeta = beta - neutralBeta;
+        
+        if (Math.abs(diffBeta) > 12) z = diffBeta > 0 ? 1 : -1;
+        if (Math.abs(gamma) > 12) x = gamma > 0 ? 1 : -1;
+        
+        gyroInput.x = x;
+        gyroInput.z = z;
+      });
+
+      // Touch Buttons bindings
+      const bindTouch = (id, actionDown, actionUp) => {
+        const btn = document.getElementById(id);
+        if(!btn) return;
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); actionDown(); }, {passive: false});
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); actionUp(); }, {passive: false});
+      };
+      
+      bindTouch('tBtnAtk', () => attackRequest("slash"), () => {});
+      bindTouch('tBtnJump', () => { player.jumpBuffer = 0.16; }, () => {});
+      bindTouch('tBtnRoll', () => rollRequest(), () => {});
+      bindTouch('tBtnFly', () => keys.add("KeyR"), () => keys.delete("KeyR"));
+
       function getMoveInput() {
         let x = 0;
         let z = 0;
@@ -1427,6 +1554,12 @@
         if (keys.has("KeyD") || keys.has("ArrowRight")) x += 1;
         if (keys.has("KeyW") || keys.has("ArrowUp")) z -= 1;
         if (keys.has("KeyS") || keys.has("ArrowDown")) z += 1;
+        
+        if (useGyro && (gyroInput.x !== 0 || gyroInput.z !== 0)) {
+          x = gyroInput.x;
+          z = gyroInput.z;
+        }
+
         const len = Math.hypot(x, z) || 1;
         return { x: x / len, z: z / len, mag: Math.hypot(x, z) > 0 ? 1 : 0 };
       }
@@ -1522,7 +1655,7 @@
           player.grounded = false;
           player.jumpBuffer = 0;
           createDustBurst(player.pos.clone().add(new THREE.Vector3(0, 0.2, 0)), 8, 1.2);
-        } else if (keys.has("Space") && !player.grounded) {
+        } else if (keys.has("KeyR") && !player.grounded) {
           player.flying = true;
         }
 
@@ -1549,7 +1682,7 @@
         }
 
         if (player.flying) {
-          if (keys.has("Space")) {
+          if (keys.has("KeyR")) {
             player.vel.y = lerp(player.vel.y, 8, 1 - Math.exp(-dt * 10));
           } else if (keys.has("KeyQ")) {
             player.vel.y = lerp(player.vel.y, -8, 1 - Math.exp(-dt * 10));
