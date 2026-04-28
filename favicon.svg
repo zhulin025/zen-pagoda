@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#fcfaf2" rx="4"/>
+  <!-- Foundation -->
+  <rect x="6" y="24" width="20" height="4" fill="#a0a498"/>
+  <!-- Body -->
+  <rect x="10" y="8" width="12" height="16" fill="#d48a6a"/>
+  <!-- Roof 1 -->
+  <rect x="4" y="20" width="24" height="4" fill="#6db4a6"/>
+  <!-- Roof 2 -->
+  <rect x="7" y="14" width="18" height="3" fill="#6db4a6"/>
+  <!-- Roof 3 -->
+  <rect x="10" y="8" width="12" height="3" fill="#6db4a6"/>
+  <!-- Spire -->
+  <rect x="15" y="2" width="2" height="6" fill="#bfa17a"/>
+</svg>
