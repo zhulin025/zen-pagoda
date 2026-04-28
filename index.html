@@ -266,6 +266,7 @@
       <button id="tBtnHide" class="touchBtn" style="width:44px; height:44px; font-size:11px;">隐藏</button>
       <button id="tBtnHelp" class="touchBtn" style="width:44px; height:44px; font-size:11px;">帮助</button>
       <button id="tBtnTeleport" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">闪现</button>
+      <button id="tBtnTeleportFixed" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">定视</button>
       <button id="tBtnGiant" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(214,81,79,0.3);">巨人</button>
     </div>
     <div style="position:absolute; bottom:120px; right:30px; display:flex; align-items:flex-end; gap:10px;">
@@ -293,7 +294,8 @@
         <div>Q：下降</div>
         <div>E / 右键：闪避翻滚 / 蓄力旋斩</div>
         <div>F：终极剑气 (满能量)</div>
-        <div>左键：普通攻击</div>
+        <div>左键：普通攻击 / T：随机闪现</div>
+        <div>Shift + T：定视闪现 (保持当前视角)</div>
       </div>
     </div>
   </div>
@@ -323,7 +325,8 @@
         <div>Shift：疾跑</div>
         <div>Space：跳跃</div>
         <div>R：起飞 / Q：下降</div>
-        <div>T：全图随机闪现</div>
+        <div>T：全图随机闪现 (自动对齐视角)</div>
+        <div>Shift + T：定视闪现 (视角不变)</div>
         <div>G：大铁锤巨人模式 (攻击范围极大)</div>
         <div>E / 右键：闪避翻滚 / 蓄力旋斩</div>
         <div>F：释放终极剑气 (满能量)</div>
@@ -1443,7 +1446,7 @@
         }
       }
 
-      function teleport() {
+      function teleport(fixedView = false) {
         const x = rand(-80, 80);
         const z = rand(-80, 80);
         
@@ -1461,17 +1464,19 @@
         player.pos.set(x, y, z);
         player.vel.set(0, 0, 0);
         
-        // 让角色面向中心宝塔方向 (0, 0, 0)
-        player.facing = Math.atan2(-x, -z);
-        // 让相机视角也盯向中心，且位于角色后方
-        cameraRig.yaw = Math.atan2(x, z);
+        if (!fixedView) {
+          // 让角色面向中心宝塔方向 (0, 0, 0)
+          player.facing = Math.atan2(-x, -z);
+          // 让相机视角也盯向中心，且位于角色后方
+          cameraRig.yaw = Math.atan2(x, z);
+        }
         
         createDustBurst(player.pos.clone().add(new THREE.Vector3(0, 0.5, 0)), 20, 3);
         
         const tip = document.getElementById('tip');
-        tip.textContent = "已闪现！视角已锁定中心宝塔方向。";
+        tip.textContent = fixedView ? "已闪现！视角保持当前方向。" : "已闪现！视角已锁定中心宝塔方向。";
         tip.style.opacity = "1";
-        setTimeout(() => tip.style.opacity = "0.7", 1000);
+        setTimeout(() => tip.style.opacity = "0", 1000);
       }
 
       function toggleGiant() {
@@ -1595,7 +1600,9 @@
           const uiElements = document.querySelectorAll('.panel, .tip');
           uiElements.forEach(el => el.style.display = el.style.display === 'none' ? '' : 'none');
         }
-        if (e.code === "KeyT") teleport();
+        if (e.code === "KeyT") {
+          teleport(e.shiftKey);
+        }
         if (e.code === "KeyG") toggleGiant();
       }, { passive: false });
 
@@ -1717,7 +1724,8 @@
         attackRequest("ultimate");
       }, () => {});
       
-      bindTouch('tBtnTeleport', () => teleport(), () => {});
+      bindTouch('tBtnTeleport', () => teleport(false), () => {});
+      bindTouch('tBtnTeleportFixed', () => teleport(true), () => {});
       bindTouch('tBtnGiant', () => toggleGiant(), () => {});
       
       const tBtnHide = document.getElementById('tBtnHide');
