@@ -1,4 +1,4 @@
-<img src="favicon.png" width="200" alt="Logo">
+<img src="favicon_b.png" width="200" alt="Logo">
 
 # 禅塔 (Zen Pagoda)
 
