@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -15,9 +16,12 @@
       --shadow: rgba(55, 24, 18, 0.16);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       width: 100%;
       height: 100%;
@@ -29,7 +33,9 @@
       user-select: none;
     }
 
-    canvas { display: block; }
+    canvas {
+      display: block;
+    }
 
     .hud {
       position: fixed;
@@ -146,7 +152,9 @@
       transition: opacity 180ms ease;
     }
 
-    .tip.show { opacity: 1; }
+    .tip.show {
+      opacity: 1;
+    }
 
     .hitFlash {
       position: absolute;
@@ -156,7 +164,10 @@
       transition: opacity 0.1s;
       pointer-events: none;
     }
-    .hitFlash.show { opacity: 1; }
+
+    .hitFlash.show {
+      opacity: 1;
+    }
 
     #startOverlay {
       position: fixed;
@@ -168,7 +179,12 @@
       justify-content: center;
       z-index: 9999;
     }
-    #startOverlay h2 { font-size: 32px; margin-bottom: 10px; }
+
+    #startOverlay h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
     #startBtn {
       padding: 16px 36px;
       font-size: 18px;
@@ -177,9 +193,10 @@
       color: white;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(109,180,166,0.4);
+      box-shadow: 0 4px 12px rgba(109, 180, 166, 0.4);
       font-weight: bold;
     }
+
     #touchUI {
       display: none;
       position: fixed;
@@ -187,33 +204,38 @@
       pointer-events: none;
       z-index: 900;
     }
+
     .touchBtn {
       border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      border: 2px solid rgba(255,255,255,0.6);
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.6);
       color: var(--ink);
       font-weight: 800;
       pointer-events: auto;
       backdrop-filter: blur(4px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .touchBtn:active { background: rgba(255,255,255,0.6); }
+
+    .touchBtn:active {
+      background: rgba(255, 255, 255, 0.6);
+    }
 
     /* Modal Styles */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 10000;
       pointer-events: auto;
     }
+
     .modal {
       background: var(--paper);
       padding: 24px;
@@ -221,8 +243,9 @@
       max-width: 90%;
       width: 400px;
       position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
+
     .modal-close {
       position: absolute;
       top: 12px;
@@ -230,7 +253,7 @@
       width: 32px;
       height: 32px;
       border: none;
-      background: rgba(0,0,0,0.1);
+      background: rgba(0, 0, 0, 0.1);
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -240,37 +263,81 @@
     }
 
     @media (max-width: 720px) {
-      .title { top: 12px; left: 12px; width: auto; max-width: 60%; padding: 8px 12px; }
-      .title h1 { font-size: 16px; margin: 0; }
-      .title p { display: none; }
-      
-      .stats { top: 12px; right: 12px; width: 150px; padding: 10px; }
-      .statRow { font-size: 11px; }
-      .statRow span:first-child { opacity: 0.7; }
-      .sliderWrap { display: block; margin-top: 8px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px; }
-      #enemySlider { width: 100%; height: 20px; }
-      
-      .controls { display: none !important; } /* Hide static controls panel on mobile */
+      .title {
+        top: 12px;
+        left: 12px;
+        width: auto;
+        max-width: 60%;
+        padding: 8px 12px;
+      }
+
+      .title h1 {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .title p {
+        display: none;
+      }
+
+      .stats {
+        top: 12px;
+        right: 12px;
+        width: 150px;
+        padding: 10px;
+      }
+
+      .statRow {
+        font-size: 11px;
+      }
+
+      .statRow span:first-child {
+        opacity: 0.7;
+      }
+
+      .sliderWrap {
+        display: block;
+        margin-top: 8px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 8px;
+      }
+
+      #enemySlider {
+        width: 100%;
+        height: 20px;
+      }
+
+      .controls {
+        display: none !important;
+      }
+
+      /* Hide static controls panel on mobile */
     }
   </style>
 </head>
+
 <body>
   <div id="startOverlay">
     <h2>禅塔 (Zen Pagoda)</h2>
     <p style="margin-bottom:30px; opacity:0.8;">使用键盘鼠标，或在手机上通过陀螺仪移动</p>
     <button id="startBtn">进入游戏</button>
   </div>
-  
+
   <div id="touchUI">
-    <div style="position:absolute; top:160px; right:12px; pointer-events:auto; display:flex; flex-direction:column; gap:8px;">
+    <div
+      style="position:absolute; top:160px; right:12px; pointer-events:auto; display:flex; flex-direction:column; gap:8px;">
       <button id="tBtnHide" class="touchBtn" style="width:44px; height:44px; font-size:11px;">隐藏</button>
       <button id="tBtnHelp" class="touchBtn" style="width:44px; height:44px; font-size:11px;">帮助</button>
-      <button id="tBtnTeleport" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">闪现</button>
-      <button id="tBtnTeleportFixed" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">定视</button>
-      <button id="tBtnGiant" class="touchBtn" style="width:44px; height:44px; font-size:11px; background:rgba(214,81,79,0.3);">巨人</button>
+      <button id="tBtnTeleport" class="touchBtn"
+        style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">闪现</button>
+      <button id="tBtnTeleportFixed" class="touchBtn"
+        style="width:44px; height:44px; font-size:11px; background:rgba(109,180,166,0.3);">定视</button>
+      <button id="tBtnGiant" class="touchBtn"
+        style="width:44px; height:44px; font-size:11px; background:rgba(214,81,79,0.3);">巨人</button>
     </div>
     <div style="position:absolute; bottom:120px; right:30px; display:flex; align-items:flex-end; gap:10px;">
-      <button id="tBtnUlt" class="touchBtn" style="width:50px; height:50px; font-size:12px; background:rgba(214,81,79,0.3); border-color:var(--accent); color:white;">大招</button>
+      <button id="tBtnUlt" class="touchBtn"
+        style="width:50px; height:50px; font-size:12px; background:rgba(214,81,79,0.3); border-color:var(--accent); color:white;">大招</button>
     </div>
     <div style="position:absolute; bottom:40px; right:30px; display:flex; align-items:flex-end; gap:15px;">
       <div style="display:flex; flex-direction:column; gap:5px;">
@@ -278,7 +345,8 @@
         <button id="tBtnDescend" class="touchBtn" style="width:45px; height:45px; font-size:12px;">下降</button>
       </div>
       <button id="tBtnJump" class="touchBtn" style="width:60px; height:60px; font-size:14px;">跳跃</button>
-      <button id="tBtnAtk" class="touchBtn" style="width:75px; height:75px; font-size:16px; border-color:var(--accent); color:var(--accent);">攻击</button>
+      <button id="tBtnAtk" class="touchBtn"
+        style="width:75px; height:75px; font-size:16px; border-color:var(--accent); color:var(--accent);">攻击</button>
       <button id="tBtnRoll" class="touchBtn" style="width:50px; height:50px; font-size:12px;">闪避</button>
     </div>
   </div>
@@ -340,10 +408,13 @@
     <div class="hitFlash" id="hitFlash"></div>
   </div>
 
-  <div id="gameOver" style="display:none; position:fixed; inset:0; background:rgba(40,20,15,0.85); z-index:999; flex-direction:column; align-items:center; justify-content:center; color:#fff5e6; pointer-events:auto;">
+  <div id="gameOver"
+    style="display:none; position:fixed; inset:0; background:rgba(40,20,15,0.85); z-index:999; flex-direction:column; align-items:center; justify-content:center; color:#fff5e6; pointer-events:auto;">
     <h1 style="font-family:Georgia,serif; font-size:48px; margin-bottom:10px;">胜败乃兵家常事</h1>
     <p style="font-size:20px; opacity:0.8; margin-bottom:40px;" id="gameOverStats"></p>
-    <button style="padding:14px 32px; font-size:16px; border-radius:30px; border:none; background:#d6514f; color:#fff; cursor:pointer;" onclick="location.reload()">重新开始</button>
+    <button
+      style="padding:14px 32px; font-size:16px; border-radius:30px; border:none; background:#d6514f; color:#fff; cursor:pointer;"
+      onclick="location.reload()">重新开始</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
@@ -351,7 +422,7 @@
     (() => {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xf6e7cf);
-      scene.fog = new THREE.Fog(0xf6e7cf, 58, 145);
+      scene.fog = new THREE.Fog(0xf6e7cf, 100, 200);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -489,9 +560,9 @@
         x += currentOffsetX;
         z += currentOffsetZ;
         collisionBoxes.push({
-          minX: x - w/2, maxX: x + w/2,
-          minY: y - h/2, maxY: y + h/2,
-          minZ: z - d/2, maxZ: z + d/2,
+          minX: x - w / 2, maxX: x + w / 2,
+          minY: y - h / 2, maxY: y + h / 2,
+          minZ: z - d / 2, maxZ: z + d / 2,
           isRamp, rampDir,
           w, h, d
         });
@@ -524,21 +595,21 @@
           if (box.isRamp) return;
           if (currentY >= box.maxY - 0.2) return;
           if (currentY + 1.8 <= box.minY) return;
-          
+
           const r = 0.5;
           if (nextPos.x > box.minX - r && nextPos.x < box.maxX + r &&
-              nextPos.z > box.minZ - r && nextPos.z < box.maxZ + r) {
-             
-             const dLeft = nextPos.x - (box.minX - r);
-             const dRight = (box.maxX + r) - nextPos.x;
-             const dFront = nextPos.z - (box.minZ - r);
-             const dBack = (box.maxZ + r) - nextPos.z;
-             
-             const minD = Math.min(dLeft, dRight, dFront, dBack);
-             if (minD === dLeft) nextPos.x = box.minX - r;
-             else if (minD === dRight) nextPos.x = box.maxX + r;
-             else if (minD === dFront) nextPos.z = box.minZ - r;
-             else if (minD === dBack) nextPos.z = box.maxZ + r;
+            nextPos.z > box.minZ - r && nextPos.z < box.maxZ + r) {
+
+            const dLeft = nextPos.x - (box.minX - r);
+            const dRight = (box.maxX + r) - nextPos.x;
+            const dFront = nextPos.z - (box.minZ - r);
+            const dBack = (box.maxZ + r) - nextPos.z;
+
+            const minD = Math.min(dLeft, dRight, dFront, dBack);
+            if (minD === dLeft) nextPos.x = box.minX - r;
+            else if (minD === dRight) nextPos.x = box.maxX + r;
+            else if (minD === dFront) nextPos.z = box.minZ - r;
+            else if (minD === dBack) nextPos.z = box.maxZ + r;
           }
         });
       }
@@ -865,7 +936,7 @@
       function makePagoda() {
         const group = new THREE.Group();
         const bx = 16, bz = 2; // Pagoda world position
-        
+
         // Foundation
         addVoxel(group, 0, 1, 0, 18, 2, 18, shared.mats.stoneWarm);
         addCollisionBox(bx, 1, bz, 18, 2, 18);
@@ -873,7 +944,7 @@
         addCollisionBox(bx, 2.1, bz, 14, 0.5, 14);
         addVoxel(group, 0, 2.6, 0, 12, 0.5, 12, shared.mats.stoneDark);
         addCollisionBox(bx, 2.6, bz, 12, 0.5, 12);
-        
+
         // Front Steps to foundation
         for (let i = 0; i < 6; i++) {
           let sy = 0.25 + i * 0.45;
@@ -934,41 +1005,41 @@
           let th = 0.5; // Wall thickness
           let y = index === levels.length - 1 ? coreY : coreY + 0.55;
           let dWidth = 1.8; // Door width
-          
+
           // Back wall
-          addVoxel(group, 0, y, -cw/2 + th/2, cw, ch, th, shared.mats.stoneWarm);
-          addCollisionBox(bx, y, bz - cw/2 + th/2, cw, ch, th);
+          addVoxel(group, 0, y, -cw / 2 + th / 2, cw, ch, th, shared.mats.stoneWarm);
+          addCollisionBox(bx, y, bz - cw / 2 + th / 2, cw, ch, th);
           // Left wall
-          addVoxel(group, -cw/2 + th/2, y, 0, th, ch, cw, shared.mats.stoneWarm);
-          addCollisionBox(bx - cw/2 + th/2, y, bz, th, ch, cw);
+          addVoxel(group, -cw / 2 + th / 2, y, 0, th, ch, cw, shared.mats.stoneWarm);
+          addCollisionBox(bx - cw / 2 + th / 2, y, bz, th, ch, cw);
           // Right wall
-          addVoxel(group, cw/2 - th/2, y, 0, th, ch, cw, shared.mats.stoneWarm);
-          addCollisionBox(bx + cw/2 - th/2, y, bz, th, ch, cw);
+          addVoxel(group, cw / 2 - th / 2, y, 0, th, ch, cw, shared.mats.stoneWarm);
+          addCollisionBox(bx + cw / 2 - th / 2, y, bz, th, ch, cw);
           // Front wall (with door)
-          addVoxel(group, -cw/4 - dWidth/4, y, cw/2 - th/2, cw/2 - dWidth/2, ch, th, shared.mats.stoneWarm);
-          addCollisionBox(bx - cw/4 - dWidth/4, y, bz + cw/2 - th/2, cw/2 - dWidth/2, ch, th);
-          addVoxel(group, cw/4 + dWidth/4, y, cw/2 - th/2, cw/2 - dWidth/2, ch, th, shared.mats.stoneWarm);
-          addCollisionBox(bx + cw/4 + dWidth/4, y, bz + cw/2 - th/2, cw/2 - dWidth/2, ch, th);
+          addVoxel(group, -cw / 4 - dWidth / 4, y, cw / 2 - th / 2, cw / 2 - dWidth / 2, ch, th, shared.mats.stoneWarm);
+          addCollisionBox(bx - cw / 4 - dWidth / 4, y, bz + cw / 2 - th / 2, cw / 2 - dWidth / 2, ch, th);
+          addVoxel(group, cw / 4 + dWidth / 4, y, cw / 2 - th / 2, cw / 2 - dWidth / 2, ch, th, shared.mats.stoneWarm);
+          addCollisionBox(bx + cw / 4 + dWidth / 4, y, bz + cw / 2 - th / 2, cw / 2 - dWidth / 2, ch, th);
 
           // Floor of core and internal stairs
           if (index < levels.length - 1) {
             // Split floor to leave hole for next stairs
             addVoxel(group, 0, coreY - 0.4, 1.2, cw, 0.24, cw - 2.4, shared.mats.woodRedDark);
             addCollisionBox(bx, coreY - 0.4, bz + 1.2, cw, 0.24, cw - 2.4);
-            addVoxel(group, -1.2, coreY - 0.4, -cw/2 + 1.2, cw - 2.4, 0.24, 2.4, shared.mats.woodRedDark);
-            addCollisionBox(bx - 1.2, coreY - 0.4, bz - cw/2 + 1.2, cw - 2.4, 0.24, 2.4);
-            
+            addVoxel(group, -1.2, coreY - 0.4, -cw / 2 + 1.2, cw - 2.4, 0.24, 2.4, shared.mats.woodRedDark);
+            addCollisionBox(bx - 1.2, coreY - 0.4, bz - cw / 2 + 1.2, cw - 2.4, 0.24, 2.4);
+
             // Stairs to next level
-            let nextDeckY = levels[index+1].y - 0.22;
+            let nextDeckY = levels[index + 1].y - 0.22;
             let currentFloorY = coreY - 0.4 + 0.12;
             let rampH = nextDeckY - currentFloorY;
-            
+
             let rampMesh = makeBox(1.5, rampH, 3.5, shared.mats.woodOrange);
             rampMesh.rotation.x = -Math.atan2(rampH, 3.5);
-            rampMesh.position.set(0, currentFloorY + rampH/2, -cw/2 + 1.75);
+            rampMesh.position.set(0, currentFloorY + rampH / 2, -cw / 2 + 1.75);
             group.add(rampMesh);
             // +z is down the ramp, so rampDir is '-z'
-            addCollisionBox(bx, currentFloorY + rampH/2, bz - cw/2 + 1.75, 1.5, rampH, 3.5, true, '-z');
+            addCollisionBox(bx, currentFloorY + rampH / 2, bz - cw / 2 + 1.75, 1.5, rampH, 3.5, true, '-z');
           } else {
             // Top floor is solid
             addVoxel(group, 0, coreY - 0.4, 0, cw, 0.24, cw, shared.mats.woodRedDark);
@@ -1079,39 +1150,39 @@
         const dz = endZ - startZ;
         const dist = Math.hypot(dx, dz);
         const angle = Math.atan2(dx, dz); // Rotation along Y
-        
+
         const segments = Math.floor(dist / 2);
         const width = 4;
-        
+
         for (let i = 0; i <= segments; i++) {
           const t = i / segments;
           const x = startX + dx * t;
           const z = startZ + dz * t;
-          
+
           // Arch height
           const arch = Math.sin(t * Math.PI) * 4;
           const y = 0.5 + arch;
-          
+
           // Deck
           const deck = makeBox(width, 0.4, 2.2, shared.mats.woodRed);
           deck.position.set(x, y, z);
           deck.rotation.y = angle;
           world.add(deck);
-          
+
           // Railings - only add if not near the very ends to prevent visual overlap blocking the entrance
           if (i > 2 && i < segments - 2) {
             const railL = makeBox(0.3, 1.2, 2.2, shared.mats.woodRedDark);
-            railL.position.set(x + Math.cos(angle)*width/2, y + 0.6, z - Math.sin(angle)*width/2);
+            railL.position.set(x + Math.cos(angle) * width / 2, y + 0.6, z - Math.sin(angle) * width / 2);
             railL.rotation.y = angle;
             world.add(railL);
-            
+
             const railR = makeBox(0.3, 1.2, 2.2, shared.mats.woodRedDark);
-            railR.position.set(x - Math.cos(angle)*width/2, y + 0.6, z + Math.sin(angle)*width/2);
+            railR.position.set(x - Math.cos(angle) * width / 2, y + 0.6, z + Math.sin(angle) * width / 2);
             railR.rotation.y = angle;
             world.add(railR);
           }
         }
-        
+
         currentOffsetX = 0;
         currentOffsetZ = 0;
         const collisionSegments = Math.floor(dist);
@@ -1122,12 +1193,12 @@
           const arch = Math.sin(t * Math.PI) * 4;
           const y = 0.5 + arch;
           addCollisionBox(x, y - 0.2, z, 3.8, 0.4, 3.8);
-          
+
           // Skip railings at the very beginning and end (first/last 8 units) to avoid blocking the entrance
           const dFromStart = t * dist;
           if (dFromStart > 8 && dFromStart < dist - 8) {
-            pushStaticCollider(x + Math.cos(angle)*width/2, z - Math.sin(angle)*width/2, 0.6);
-            pushStaticCollider(x - Math.cos(angle)*width/2, z + Math.sin(angle)*width/2, 0.6);
+            pushStaticCollider(x + Math.cos(angle) * width / 2, z - Math.sin(angle) * width / 2, 0.6);
+            pushStaticCollider(x - Math.cos(angle) * width / 2, z + Math.sin(angle) * width / 2, 0.6);
           }
         }
       }
@@ -1141,12 +1212,12 @@
 
         makeTorii(0, -25);
         makeTorii(0, 25);
-        
+
         // Houses
         for (let i = -20; i <= 20; i += 12) {
           const woodMat = Math.random() > 0.5 ? shared.mats.woodOrange : shared.mats.woodRed;
           const roofMat = Math.random() > 0.5 ? shared.mats.roofDark : shared.mats.roof;
-          
+
           // Left houses
           let hl = new THREE.Group();
           addVoxel(hl, 0, 2.5, 0, 8, 5, 10, woodMat);
@@ -1157,7 +1228,7 @@
           makeWoodPost(-10, i + 3);
           makeTree("sakura", -18, i - 4);
           makeStoneLantern(-7, i);
-          
+
           // Right houses
           const woodMat2 = Math.random() > 0.5 ? shared.mats.woodOrange : shared.mats.woodRed;
           const roofMat2 = Math.random() > 0.5 ? shared.mats.roofDark : shared.mats.roof;
@@ -1179,44 +1250,44 @@
         const ground = new THREE.Mesh(new THREE.BoxGeometry(60, 0.4, 60), shared.mats.stone);
         ground.position.set(currentOffsetX, -0.2, currentOffsetZ);
         world.add(ground);
-        
+
         // Base foundation
         addCollisionBox(0, 0.5, 0, 30, 1.0, 30);
         const base = makeBox(30, 1.0, 30, shared.mats.stoneWarm);
         base.position.set(currentOffsetX, 0.5, currentOffsetZ);
         world.add(base);
-        
+
         // Steps
         addCollisionBox(0, 0.25, 16, 10, 0.5, 2);
         const steps = makeBox(10, 0.5, 2, shared.mats.stoneWarm);
         steps.position.set(currentOffsetX, 0.25, currentOffsetZ + 16);
         world.add(steps);
-        
+
         // Rocks
         makeRubble(new THREE.Vector3(currentOffsetX - 15, 0, currentOffsetZ + 10), [shared.mats.stoneDark], 8);
         makeRubble(new THREE.Vector3(currentOffsetX + 20, 0, currentOffsetZ - 15), [shared.mats.stoneWarm], 5);
-        
+
         // Dojo building (Open)
         const dojo = new THREE.Group();
         addVoxel(dojo, 0, 1.2, 0, 24, 0.4, 24, shared.mats.woodRedDark);
         addCollisionBox(0, 1.2, 0, 24, 0.4, 24);
-        
+
         // Pillars
         [[-11, -11], [11, -11], [-11, 11], [11, 11]].forEach(([px, pz]) => {
           addVoxel(dojo, px, 4.3, pz, 0.8, 6.2, 0.8, shared.mats.woodOrange);
           addCollisionBox(px, 4.3, pz, 0.8, 6.2, 0.8);
         });
-        
+
         // Roof
         addVoxel(dojo, 8.3, 0, 28, 2, 28, shared.mats.roof);
         dojo.position.set(currentOffsetX, 0, currentOffsetZ);
         world.add(dojo);
-        
+
         // Details
         makeWoodPost(0, -6);
         makeWoodPost(-5, 0);
         makeWoodPost(5, 0);
-        
+
         makePond();
         for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
           makeTree("bamboo", Math.cos(a) * 24, Math.sin(a) * 24);
@@ -1228,15 +1299,15 @@
         // Map 1: Garden (South)
         currentOffsetX = 0; currentOffsetZ = 40;
         buildGarden();
-        
+
         // Map 2: Ancient Street (Northwest)
         currentOffsetX = -50; currentOffsetZ = -40;
         makeAncientStreet();
-        
+
         // Map 3: Samurai Dojo (Northeast)
         currentOffsetX = 50; currentOffsetZ = -40;
         makeSamuraiDojo();
-        
+
         // Bridges
         makeLongBridge(0, 15, -40, -15);
         makeLongBridge(0, 15, 40, -15);
@@ -1304,11 +1375,11 @@
         g.add(belt);
         const head = makeBox(0.95, 0.95, 0.9, shared.mats.playerSkin);
         head.position.set(0, 3.8, 0.02);
-        
+
         const eyeL = makeBox(0.15, 0.15, 0.1, shared.mats.black);
         eyeL.position.set(-0.25, 0.1, 0.46);
         head.add(eyeL);
-        
+
         const eyeR = makeBox(0.15, 0.15, 0.1, shared.mats.black);
         eyeR.position.set(0.25, 0.1, 0.46);
         head.add(eyeR);
@@ -1449,7 +1520,7 @@
       function teleport(fixedView = false) {
         const x = rand(-80, 80);
         const z = rand(-80, 80);
-        
+
         let y;
         const toGround = Math.random() < 0.5;
         if (toGround) {
@@ -1459,20 +1530,20 @@
           y = rand(15, 50);
           player.flying = true;
         }
-        
+
         createDebrisBurst(player.pos.clone().add(new THREE.Vector3(0, 2, 0)), [shared.mats.playerCloth, shared.mats.playerSkin], 15, 4);
         player.pos.set(x, y, z);
         player.vel.set(0, 0, 0);
-        
+
         if (!fixedView) {
           // 让角色面向中心宝塔方向 (0, 0, 0)
           player.facing = Math.atan2(-x, -z);
           // 让相机视角也盯向中心，且位于角色后方
           cameraRig.yaw = Math.atan2(x, z);
         }
-        
+
         createDustBurst(player.pos.clone().add(new THREE.Vector3(0, 0.5, 0)), 20, 3);
-        
+
         const tip = document.getElementById('tip');
         tip.textContent = fixedView ? "已闪现！视角保持当前方向。" : "已闪现！视角已锁定中心宝塔方向。";
         tip.style.opacity = "1";
@@ -1484,10 +1555,10 @@
         const s = player.isGiant ? 2 : 1;
         player.visual.scale.set(s, s, s);
         playerParts.hammer.visible = player.isGiant;
-        
+
         createDustBurst(player.pos.clone(), player.isGiant ? 30 : 15, player.isGiant ? 4 : 2);
         shakeTimer = 0.3;
-        
+
         const tip = document.getElementById('tip');
         tip.textContent = player.isGiant ? "变身巨人！大铁锤蓄势待发！" : "恢复常态。";
         tip.style.opacity = "1";
@@ -1534,7 +1605,7 @@
       function attackRequest(type) {
         if (player.attackTimer > 0 || player.rollTimer > 0) return;
         if (type === "spin" && player.spinCooldown > 0) return;
-        
+
         if (type === "ultimate") {
           if (player.energy < 100) return;
           player.energy = 0;
@@ -1564,10 +1635,10 @@
         player.attackTimer = type === "spin" ? 0.6 : 0.32;
         player.spinCooldown = type === "spin" ? 0.42 : player.spinCooldown;
         player.comboStep = type === "slash" ? (player.comboStep + 1) % 3 : 0;
-        
+
         attackFrame = 0;
         const pos = player.pos.clone();
-        
+
         if (player.attackType === "slash0") spawnSlashArc(pos, player.facing - 0.5, 1.6);
         else if (player.attackType === "slash1") spawnSlashArc(pos, player.facing + 0.5, 1.6);
         else if (player.attackType === "slash2") spawnSlashArc(pos, player.facing, 2.2);
@@ -1651,12 +1722,12 @@
           mouse.lastY = e.touches[0].clientY;
         }
       }, { passive: false });
-      
+
       window.addEventListener("touchmove", (e) => {
         if (e.touches.length === 2) {
           const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
           const delta = (d - touchDist) * 0.05;
-          cameraRig.distance = clamp(cameraRig.distance - delta, 5, 25);
+          cameraRig.distance = clamp(cameraRig.distance - delta, 8, 120);
           touchDist = d;
           e.preventDefault();
         } else if (mouse.isDragging && e.target.tagName !== "BUTTON") {
@@ -1672,10 +1743,10 @@
 
       let useGyro = false;
       let gyroInput = { x: 0, z: 0 };
-      
+
       document.getElementById('startBtn').addEventListener('click', async () => {
         document.getElementById('startOverlay').style.display = 'none';
-        
+
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
           try {
             const permission = await DeviceOrientationEvent.requestPermission();
@@ -1694,40 +1765,40 @@
         if (!useGyro) return;
         const beta = e.beta || 0;
         const gamma = e.gamma || 0;
-        
+
         let x = 0;
         let z = 0;
         const neutralBeta = 40;
         const diffBeta = beta - neutralBeta;
-        
+
         if (Math.abs(diffBeta) > 12) z = diffBeta > 0 ? 1 : -1;
         if (Math.abs(gamma) > 12) x = gamma > 0 ? 1 : -1;
-        
+
         gyroInput.x = x;
         gyroInput.z = z;
       });
 
       const bindTouch = (id, actionDown, actionUp) => {
         const btn = document.getElementById(id);
-        if(!btn) return;
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); actionDown(); }, {passive: false});
-        btn.addEventListener('touchend', (e) => { e.preventDefault(); actionUp(); }, {passive: false});
+        if (!btn) return;
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); actionDown(); }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); actionUp(); }, { passive: false });
       };
-      
-      bindTouch('tBtnAtk', () => attackRequest("slash"), () => {});
-      bindTouch('tBtnJump', () => { player.jumpBuffer = 0.16; }, () => {});
-      bindTouch('tBtnRoll', () => rollRequest(), () => {});
+
+      bindTouch('tBtnAtk', () => attackRequest("slash"), () => { });
+      bindTouch('tBtnJump', () => { player.jumpBuffer = 0.16; }, () => { });
+      bindTouch('tBtnRoll', () => rollRequest(), () => { });
       bindTouch('tBtnFly', () => keys.add("KeyR"), () => keys.delete("KeyR"));
       bindTouch('tBtnDescend', () => keys.add("KeyQ"), () => keys.delete("KeyQ"));
       bindTouch('tBtnUlt', () => {
         // 移动端特别优化：如果能量不够，给一点视觉反馈提示（可选）
         attackRequest("ultimate");
-      }, () => {});
-      
-      bindTouch('tBtnTeleport', () => teleport(false), () => {});
-      bindTouch('tBtnTeleportFixed', () => teleport(true), () => {});
-      bindTouch('tBtnGiant', () => toggleGiant(), () => {});
-      
+      }, () => { });
+
+      bindTouch('tBtnTeleport', () => teleport(false), () => { });
+      bindTouch('tBtnTeleportFixed', () => teleport(true), () => { });
+      bindTouch('tBtnGiant', () => toggleGiant(), () => { });
+
       const tBtnHide = document.getElementById('tBtnHide');
       const tBtnHelp = document.getElementById('tBtnHelp');
       const helpModal = document.getElementById('helpModal');
@@ -1741,29 +1812,29 @@
           uiElements.forEach(el => el.style.display = isHidden ? '' : 'none');
           tBtnHide.textContent = isHidden ? '隐藏' : '显示';
           tBtnHide.style.background = isHidden ? 'rgba(255,255,255,0.25)' : 'rgba(109,180,166,0.6)';
-        }, {passive: false});
+        }, { passive: false });
       }
 
       if (tBtnHelp) {
         tBtnHelp.addEventListener('touchstart', (e) => {
           e.preventDefault();
           helpModal.style.display = 'flex';
-        }, {passive: false});
+        }, { passive: false });
       }
 
       if (modalClose) {
         modalClose.addEventListener('touchstart', (e) => {
           e.preventDefault();
           helpModal.style.display = 'none';
-        }, {passive: false});
+        }, { passive: false });
       }
-      
+
       helpModal.addEventListener('touchstart', (e) => {
-        if(e.target === helpModal) {
+        if (e.target === helpModal) {
           e.preventDefault();
           helpModal.style.display = 'none';
         }
-      }, {passive: false});
+      }, { passive: false });
 
       function getMoveInput() {
         let x = 0;
@@ -1772,7 +1843,7 @@
         if (keys.has("KeyD") || keys.has("ArrowRight")) x += 1;
         if (keys.has("KeyW") || keys.has("ArrowUp")) z -= 1;
         if (keys.has("KeyS") || keys.has("ArrowDown")) z += 1;
-        
+
         if (useGyro && (gyroInput.x !== 0 || gyroInput.z !== 0)) {
           x = gyroInput.x;
           z = gyroInput.z;
@@ -1802,11 +1873,11 @@
         const isUlt = player.attackType === "ultimate";
         const isHeavy = player.attackType === "slash2";
         const isHammer = player.isGiant;
-        
+
         const range = isHammer ? 18 : (isUlt ? 12 : (isSpin ? 4.25 : (isHeavy ? 3.8 : 3.2)));
         const radius = isHammer ? 15 : (isUlt ? 10 : (isSpin ? 3.2 : (isHeavy ? 2.5 : 1.9)));
-        
-        const hitCenter = player.pos.clone().add(new THREE.Vector3(Math.sin(player.facing) * (isSpin||isUlt||isHammer ? 0.8 : 1.8), 0, Math.cos(player.facing) * (isSpin||isUlt||isHammer ? 0.8 : 1.8)));
+
+        const hitCenter = player.pos.clone().add(new THREE.Vector3(Math.sin(player.facing) * (isSpin || isUlt || isHammer ? 0.8 : 1.8), 0, Math.cos(player.facing) * (isSpin || isUlt || isHammer ? 0.8 : 1.8)));
 
         if (isHammer) {
           createDustBurst(hitCenter.clone(), 40, 6);
@@ -1818,7 +1889,7 @@
           const dist = obj.group.position.distanceTo(hitCenter);
           if (dist < radius + obj.radius) {
             const dir = obj.group.position.clone().sub(player.pos).setY(0).normalize();
-            damageDestructible(obj, isHammer ? 10 : (isUlt ? 5 : (isSpin||isHeavy ? 2 : 1)), dir);
+            damageDestructible(obj, isHammer ? 10 : (isUlt ? 5 : (isSpin || isHeavy ? 2 : 1)), dir);
           }
         });
 
@@ -1827,7 +1898,7 @@
           const d = enemy.pos.distanceTo(hitCenter);
           if (d < range) {
             const dir = enemy.pos.clone().sub(player.pos).setY(0).normalize();
-            enemy.hp -= isHammer ? 20 : (isUlt ? 10 : (isSpin||isHeavy ? 3 : 1));
+            enemy.hp -= isHammer ? 20 : (isUlt ? 10 : (isSpin || isHeavy ? 3 : 1));
             enemy.hitTimer = isHammer ? 1.2 : (isUlt ? 0.8 : 0.25);
             enemy.vel.addScaledVector(dir, isHammer ? 35 : (isUlt ? 22 : (isSpin ? 13 : 7)));
             enemy.launchedY = isHammer ? rand(15, 25) : (isUlt ? rand(8, 12) : (isSpin ? rand(4, 7) : rand(1.4, 3.2)));
@@ -1926,7 +1997,7 @@
         const nextPos = player.pos.clone().addScaledVector(player.vel, dt);
         resolveWorldCollision(nextPos);
         resolveBoxCollision(nextPos, player.pos.y);
-        
+
         const groundY = getGroundHeight(nextPos.x, nextPos.z, player.pos.y);
 
         if (nextPos.y <= groundY) {
@@ -2143,7 +2214,7 @@
 
           enemy.launchedY -= 18 * dt;
           enemy.pos.y += enemy.launchedY * dt;
-          
+
           let enemyGround = getGroundHeight(enemy.pos.x, enemy.pos.z, enemy.pos.y);
           if (enemy.pos.y <= enemyGround) {
             if (enemy.launchedY < -5) createDustBurst(enemy.pos.clone().add(new THREE.Vector3(0, 0.12, 0)), 6, 1);
@@ -2245,7 +2316,7 @@
         const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(size), mat);
         mesh.position.copy(pos).add(new THREE.Vector3(0, 0.5, 0));
         scene.add(mesh);
-        
+
         drops.push({
           mesh,
           type,
@@ -2265,16 +2336,16 @@
             drops.splice(i, 1);
             continue;
           }
-          
+
           drop.life -= dt;
           if (drop.life <= 0) {
             drop.active = false;
             continue;
           }
-          
+
           drop.vel.y -= 15 * dt;
           drop.mesh.position.addScaledVector(drop.vel, dt);
-          
+
           const groundY = getGroundHeight(drop.mesh.position.x, drop.mesh.position.z, drop.mesh.position.y);
           if (drop.mesh.position.y <= groundY + 0.25) {
             drop.mesh.position.y = groundY + 0.25;
@@ -2282,13 +2353,13 @@
             drop.vel.x *= Math.exp(-dt * 5);
             drop.vel.z *= Math.exp(-dt * 5);
           }
-          
+
           drop.mesh.rotation.y += dt * 2;
           drop.mesh.rotation.x += dt;
-          
+
           const dist = drop.mesh.position.distanceTo(player.pos);
           if (dist < 3) {
-            const dir = player.pos.clone().add(new THREE.Vector3(0,1,0)).sub(drop.mesh.position).normalize();
+            const dir = player.pos.clone().add(new THREE.Vector3(0, 1, 0)).sub(drop.mesh.position).normalize();
             drop.vel.addScaledVector(dir, 15 * dt);
             if (dist < 1.2) {
               drop.active = false;
@@ -2348,12 +2419,12 @@
       const cameraRig = {
         yaw: Math.PI * 0.08,
         pitch: 0.45,
-        distance: 18,
+        distance: 35,
         autoYawTimer: 0
       };
 
       window.addEventListener("wheel", (e) => {
-        cameraRig.distance = clamp(cameraRig.distance + Math.sign(e.deltaY) * 1.25, 12, 24);
+        cameraRig.distance = clamp(cameraRig.distance + Math.sign(e.deltaY) * 1.25, 8, 120);
       }, { passive: true });
 
       function updateCamera(dt) {
@@ -2399,4 +2470,5 @@
     })();
   </script>
 </body>
+
 </html>
