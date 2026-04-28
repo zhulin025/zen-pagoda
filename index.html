@@ -197,13 +197,59 @@
       backdrop-filter: blur(4px);
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .touchBtn:active { background: rgba(255,255,255,0.6); }
 
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--paper);
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 90%;
+      width: 400px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(0,0,0,0.1);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
     @media (max-width: 720px) {
-      .title h1 { font-size: 22px; }
-      .controlsGrid { grid-template-columns: 1fr; }
-      .stats { top: auto; bottom: 150px; }
+      .title { top: 12px; left: 12px; width: auto; max-width: 60%; padding: 8px 12px; }
+      .title h1 { font-size: 16px; margin: 0; }
+      .title p { display: none; }
+      
+      .stats { top: 12px; right: 12px; width: 140px; padding: 8px 12px; }
+      .statRow { font-size: 11px; }
+      .statRow span:first-child { opacity: 0.7; }
+      .sliderWrap { display: none; } /* Hide slider on mobile to save space */
+      
+      .controls { display: none !important; } /* Hide static controls panel on mobile */
     }
   </style>
 </head>
@@ -215,8 +261,9 @@
   </div>
   
   <div id="touchUI">
-    <div style="position:absolute; top:24px; right:24px; pointer-events:auto;">
-      <button id="tBtnHide" class="touchBtn" style="width:40px; height:40px; font-size:12px;">界面</button>
+    <div style="position:absolute; top:80px; right:12px; pointer-events:auto; display:flex; flex-direction:column; gap:8px;">
+      <button id="tBtnHide" class="touchBtn" style="width:40px; height:40px; font-size:11px;">隐藏</button>
+      <button id="tBtnHelp" class="touchBtn" style="width:40px; height:40px; font-size:11px;">帮助</button>
     </div>
     <div style="position:absolute; bottom:120px; right:30px; display:flex; align-items:flex-end; gap:10px;">
       <button id="tBtnUlt" class="touchBtn" style="width:50px; height:50px; font-size:12px; background:rgba(214,81,79,0.3); border-color:var(--accent); color:white;">大招</button>
@@ -229,6 +276,22 @@
       <button id="tBtnJump" class="touchBtn" style="width:60px; height:60px; font-size:14px;">跳跃</button>
       <button id="tBtnAtk" class="touchBtn" style="width:75px; height:75px; font-size:16px; border-color:var(--accent); color:var(--accent);">攻击</button>
       <button id="tBtnRoll" class="touchBtn" style="width:50px; height:50px; font-size:12px;">闪避</button>
+    </div>
+  </div>
+
+  <div id="helpModal" class="modal-overlay">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <h3 style="margin-top:0;">操作说明 (Controls)</h3>
+      <div class="controlsGrid" style="display:grid; grid-template-columns:1fr; gap:8px; font-size:14px;">
+        <div>WASD / 方向键：移动</div>
+        <div>Shift：疾跑</div>
+        <div>Space：跳跃 / R：起飞</div>
+        <div>Q：下降</div>
+        <div>E / 右键：闪避翻滚 / 蓄力旋斩</div>
+        <div>F：终极剑气 (满能量)</div>
+        <div>左键：普通攻击</div>
+      </div>
     </div>
   </div>
 
@@ -1556,21 +1619,41 @@
       bindTouch('tBtnUlt', () => attackRequest("ultimate"), () => {});
       
       const tBtnHide = document.getElementById('tBtnHide');
+      const tBtnHelp = document.getElementById('tBtnHelp');
+      const helpModal = document.getElementById('helpModal');
+      const modalClose = document.getElementById('modalClose');
+
       if (tBtnHide) {
         tBtnHide.addEventListener('touchstart', (e) => {
           e.preventDefault();
-          const uiElements = document.querySelectorAll('.panel, .tip');
+          const uiElements = document.querySelectorAll('.panel:not(.controls), .tip');
           const isHidden = uiElements[0].style.display === 'none';
           uiElements.forEach(el => el.style.display = isHidden ? '' : 'none');
-          
-          // 同时隐藏手机端的其他控制按钮，只留下切换按钮
-          const otherBtns = document.querySelectorAll('.touchBtn:not(#tBtnHide)');
-          otherBtns.forEach(btn => btn.style.display = isHidden ? '' : 'none');
-          
-          tBtnHide.textContent = isHidden ? '界面' : '显示';
+          tBtnHide.textContent = isHidden ? '隐藏' : '显示';
           tBtnHide.style.background = isHidden ? 'rgba(255,255,255,0.25)' : 'rgba(109,180,166,0.6)';
         }, {passive: false});
       }
+
+      if (tBtnHelp) {
+        tBtnHelp.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          helpModal.style.display = 'flex';
+        }, {passive: false});
+      }
+
+      if (modalClose) {
+        modalClose.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          helpModal.style.display = 'none';
+        }, {passive: false});
+      }
+      
+      helpModal.addEventListener('touchstart', (e) => {
+        if(e.target === helpModal) {
+          e.preventDefault();
+          helpModal.style.display = 'none';
+        }
+      }, {passive: false});
 
       function getMoveInput() {
         let x = 0;
@@ -1675,13 +1758,19 @@
           player.vel.z = lerp(player.vel.z, 0, 1 - Math.exp(-dt * 18));
         }
 
+        if (keys.has("KeyR")) {
+          if (player.grounded) {
+            player.vel.y = 9.2;
+            player.grounded = false;
+          }
+          player.flying = true;
+        }
+
         if (player.jumpBuffer > 0 && player.grounded) {
           player.vel.y = 9.2;
           player.grounded = false;
           player.jumpBuffer = 0;
           createDustBurst(player.pos.clone().add(new THREE.Vector3(0, 0.2, 0)), 8, 1.2);
-        } else if (keys.has("KeyR") && !player.grounded) {
-          player.flying = true;
         }
 
         if (player.rollTimer > 0) {
